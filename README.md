@@ -1,10 +1,7 @@
-# iran-ecommerce-sql-analytics
-Professional SQL analytics project for Iranian e-commerce - Customer churn prediction, business intelligence, and revenue optimization
-
 # 🏪 Iranian E-Commerce SQL Analytics
 
 ## 📊 Project Overview
-[Your project description...]
+Professional SQL analytics project for Iranian e-commerce - Customer churn prediction, business intelligence, and revenue optimization
 
 ## 🎯 Business Impact
 - Identified **100% customer churn risk** through predictive analytics
@@ -25,7 +22,7 @@ Professional SQL analytics project for Iranian e-commerce - Customer churn predi
 - **30% potential revenue recovery** through targeted campaigns
 
 ## 👨‍💻 Author
-**Amin Sharifi** - [aminemsharifi@gmail.com] - [Your LinkedIn URL]
+**Amin Sharifi** - [aminemsharifi@gmail.com]
 
 ## 📄 License
 This project is licensed under the MIT License.
