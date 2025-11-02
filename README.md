@@ -65,7 +65,7 @@ psql -d your_database -f database/03_indexes_constraints.sql
 psql -d your_database -f analysis/01_sales_analysis.sql
 psql -d your_database -f analysis/02_customer_analysis.sql
 ```
-📁 Project Structure
+## 📁 Project Structure
 iranian-ecommerce-sql/
 ├── 📂 database/           # Schema design & sample data
 ├── 📂 analysis/           # Business intelligence queries
@@ -73,7 +73,7 @@ iranian-ecommerce-sql/
 ├── 📂 scripts/           # Database setup utilities
 └── 📂 results/           # Sample outputs & insights
 
-🏆 Achievements & Metrics
+## 🏆 Achievements & Metrics
 🎯 100% accuracy in customer risk segmentation
 
 💰 46M+ Tomans recoverable revenue identified
@@ -84,11 +84,11 @@ iranian-ecommerce-sql/
 
 🎪 Persian-language support with localized business logic
 
-📊 Sample Insights
+## 📊 Sample Insights
 https://results/sample_outputs/customer_risk.png
 Customer churn risk segmentation with actionable recommendations
 
-🎯 Business Applications
+## 🎯 Business Applications
 Marketing Teams: Targeted retention campaigns
 
 Sales Departments: Customer value optimization
@@ -97,14 +97,14 @@ Inventory Managers: Stock level optimization
 
 Executives: Strategic business intelligence
 
-👨‍💻 Author
+## 👨‍💻 Author
 Amin Sharifi - [aminemsharifi@gmail.com]
 Data Analyst & SQL Developer specializing in e-commerce analytics
 
-🤝 Contributing
+## 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check issues page.
 
-📄 License
+## 📄 License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
-⭐ Star this repo if you find it helpful!
+#⭐ Star this repo if you find it helpful!
