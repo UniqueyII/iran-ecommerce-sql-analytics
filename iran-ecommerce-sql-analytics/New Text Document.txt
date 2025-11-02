@@ -1,0 +1,402 @@
+-- Step 1: Create our professional database
+
+-- Step 2: Create tables with REAL business constraints
+CREATE TABLE customers (
+    customer_id SERIAL PRIMARY KEY,
+    national_code VARCHAR(10) UNIQUE,  -- کد ملی
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    phone VARCHAR(11) UNIQUE,          -- شماره همراه
+    email VARCHAR(100),
+    registration_date DATE DEFAULT CURRENT_DATE,
+    birth_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL,
+    parent_category_id INTEGER REFERENCES categories(category_id),
+    description TEXT
+);
+
+CREATE TABLE products (
+    product_id SERIAL PRIMARY KEY,
+    product_name VARCHAR(200) NOT NULL,
+    category_id INTEGER REFERENCES categories(category_id),
+    brand VARCHAR(100),
+    price DECIMAL(12, 2) NOT NULL CHECK (price > 0),
+    cost_price DECIMAL(12, 2) NOT NULL,
+    stock_quantity INTEGER DEFAULT 0 CHECK (stock_quantity >= 0),
+    weight_kg DECIMAL(5, 2),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_date DATE DEFAULT CURRENT_DATE,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(12, 2) NOT NULL CHECK (total_amount > 0),
+    shipping_province VARCHAR(50) NOT NULL,
+    shipping_city VARCHAR(50) NOT NULL,
+    shipping_address TEXT NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('pending', 'confirmed', 'shipped', 'delivered', 'cancelled')),
+    payment_method VARCHAR(30) CHECK (payment_method IN ('online', 'cash_on_delivery', 'bank_transfer')),
+    payment_status VARCHAR(20) CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES orders(order_id),
+    product_id INTEGER REFERENCES products(product_id),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    unit_price DECIMAL(12, 2) NOT NULL CHECK (unit_price > 0),
+    line_total DECIMAL(12, 2) GENERATED ALWAYS AS (quantity * unit_price) STORED
+);
+
+-- Step 3: Insert authentic Iranian data
+INSERT INTO categories (category_name, parent_category_id, description) VALUES
+('الکترونیک', NULL, 'کالاهای الکترونیکی'),
+('موبایل و تبلت', 1, 'گوشی موبایل و تبلت'),
+('لپ تاپ و کامپیوتر', 1, 'لپ تاپ و تجهیزات کامپیوتر'),
+('لوازم جانبی', 1, 'لوازم جانبی الکترونیکی'),
+('خانه و آشپزخانه', NULL, 'لوازم خانه و آشپزخانه'),
+('مد و پوشاک', NULL, 'لباس و پوشاک');
+
+-- Real Iranian customers
+INSERT INTO customers (national_code, first_name, last_name, province, city, phone, email, birth_date) VALUES
+('0123456769', 'علی', 'محمدی', 'تهران', 'تهران', '09121234667', 'ali.mohamadi@email.com', '1990-05-15'),
+('1234567890', 'فاطمه', 'احمدی', 'اصفهان', 'اصفهان', '09123456789', 'fateme.ahmadi@email.com', '1992-08-22'),
+('2345678901', 'محمد', 'کریمی', 'خراسان رضوی', 'مشهد', '09134567890', 'mohammad.karimi@email.com', '1988-12-10'),
+('3456789012', 'زهرا', 'حسینی', 'آذربایجان شرقی', 'تبریز', '09145678901', 'zahra.hosseini@email.com', '1995-03-30'),
+('4567890123', 'رضا', 'جعفری', 'فارس', 'شیراز', '09156789012', 'reza.jafari@email.com', '1993-07-18');
+
+-- Real Iranian products with realistic prices (تومان)
+INSERT INTO products (product_name, category_id, brand, price, cost_price, stock_quantity, weight_kg) VALUES
+('گوشی سامسونگ گلکسی A52', 2, 'Samsung', 8500000, 7200000, 15, 0.189),
+('گوشی شیائومی ردمی نوت 11', 2, 'Xiaomi', 6500000, 5500000, 25, 0.195),
+('لپ تاپ لنوو ایده پد 3', 3, 'Lenovo', 25000000, 21000000, 8, 1.7),
+('لپ تاپ ایسوس ویووبوک', 3, 'Asus', 32000000, 28000000, 5, 1.4),
+('هدفون بلوتوث سونی WH-1000XM4', 4, 'Sony', 12000000, 9500000, 12, 0.254),
+('ماوس وایرلس لاجیتک', 4, 'Logitech', 450000, 350000, 30, 0.089),
+('پاوربانک شیائومی 20000 میلی آمپر', 4, 'Xiaomi', 800000, 600000, 40, 0.350),
+('قهوه ساز فلر', 5, 'Philips', 3500000, 2800000, 18, 2.1),
+('جاروبرقی سامسونگ', 5, 'Samsung', 4200000, 3500000, 10, 4.2);
+
+-- order dates to have realistic historical data
+SELECT order_id, customer_id, order_date, total_amount 
+FROM orders 
+ORDER BY order_date DESC;
+
+-- If all dates are still current, let's fix them properly:
+UPDATE orders SET order_date = '2023-12-01' WHERE order_id = 7;  -- 300+ days ago
+UPDATE orders SET order_date = '2024-01-05' WHERE order_id = 10; -- 290+ days ago  
+UPDATE orders SET order_date = '2024-02-14' WHERE order_id = 9;  -- 250+ days ago
+UPDATE orders SET order_date = '2024-05-10' WHERE order_id = 8;  -- 160+ days ago
+UPDATE orders SET order_date = '2024-06-01' WHERE order_id = 5;  -- 140+ days ago
+UPDATE orders SET order_date = '2024-07-15' WHERE order_id = 1;  -- 100+ days ago
+UPDATE orders SET order_date = '2024-08-20' WHERE order_id = 2;  -- 60+ days ago
+UPDATE orders SET order_date = '2024-09-10' WHERE order_id = 3;  -- 45 days ago
+UPDATE orders SET order_date = '2024-10-15' WHERE order_id = 4;  -- 10 days ago
+UPDATE orders SET order_date = '2024-10-20' WHERE order_id = 6;  -- 5 days ago
+
+SELECT order_id, customer_id, order_date, total_amount 
+FROM orders 
+ORDER BY order_id;
+
+INSERT INTO orders (order_id, customer_id, order_date, total_amount, shipping_province, shipping_city, shipping_address, status, payment_method, payment_status) VALUES
+(1, 1, '2023-12-01', 1500000, 'تهران', 'تهران', 'خیابان ولیعصر، پلاک ۱۲۳', 'delivered', 'online', 'paid'),
+(2, 2, '2024-05-10', 8000000, 'اصفهان', 'اصفهان', 'چهارباغ عباسی، کوچه ۴۵', 'delivered', 'cash_on_delivery', 'paid'),
+(3, 4, '2025-02-14', 4500000, 'آذربایجان شرقی', 'تبریز', 'خیابان امام، پلاک ۳۴', 'delivered', 'online', 'paid'),
+(4, 5, '2025-08-05', 2000000, 'فارس', 'شیراز', 'خیابان زند، پلاک ۵۶', 'delivered', 'bank_transfer', 'paid'),
+(5, 1, '2024-07-15', 8500000, 'تهران', 'تهران', 'خیابان انقلاب، پلاک ۸۹', 'delivered', 'online', 'paid'),
+(6, 2, '2025-08-20', 12000000, 'اصفهان', 'اصفهان', 'چهارباغ عباسی، کوچه ۴۵', 'shipped', 'cash_on_delivery', 'pending'),
+(7, 3, '2025-09-10', 25000000, 'خراسان رضوی', 'مشهد', 'بلوار وکیل آباد، پلاک ۶۷', 'delivered', 'bank_transfer', 'paid'),
+(8, 1, '2025-10-26', 450000, 'تهران', 'تهران', 'خیابان ولیعصر، پلاک ۱۲۳', 'confirmed', 'online', 'paid'),
+(9, 4, '2024-06-01', 6500000, 'آذربایجان شرقی', 'تبریز', 'خیابان امام، پلاک ۳۴', 'pending', 'cash_on_delivery', 'pending'),
+(10, 5, '2025-10-20', 3500000, 'فارس', 'شیراز', 'خیابان زند، پلاک ۵۶', 'delivered', 'online', 'paid');
+
+
+-- Add order items for the new orders
+INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES
+(1, 7, 1, 1500000),   -- Power bank
+(2, 4, 1, 8000000),   -- Asus laptop  
+(3, 6, 2, 2250000),   -- 2 mice
+(4, 8, 1, 2000000),   -- Coffee maker
+(5, 1, 1, 8500000),   -- Samsung phone
+(6, 5, 1, 12000000),  -- Sony headphones
+(7, 3, 1, 25000000),  -- Lenovo laptop
+(8, 6, 1, 450000),    -- Mouse
+(9, 2, 1, 6500000),   -- Xiaomi phone
+(10, 8, 1, 3500000);  -- Coffee maker
+
+SELECT 
+    order_id, 
+    order_date, 
+    (CURRENT_DATE - order_date::date) as days_ago,
+    CASE 
+        WHEN (CURRENT_DATE - order_date::date) > 120 THEN 'HIGH RISK'
+        WHEN (CURRENT_DATE - order_date::date) BETWEEN 60 AND 120 THEN 'MEDIUM RISK'
+        ELSE 'LOW RISK'
+    END as risk_level
+FROM orders 
+ORDER BY days_ago DESC;
+
+-- Delete all existing data
+DELETE FROM order_items;
+DELETE FROM orders;
+
+-- 1. تحلیل فروش به تفکیک استان
+SELECT 
+    c.province as "استان",
+    COUNT(DISTINCT o.customer_id) as "تعداد مشتریان",
+    COUNT(o.order_id) as "تعداد سفارشات",
+    TO_CHAR(SUM(o.total_amount), '999,999,999') as "مجموع فروش (تومان)",
+    TO_CHAR(AVG(o.total_amount), '999,999,999') as "میانگین سبد خرید"
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.province
+ORDER BY SUM(o.total_amount) DESC;
+
+-- 2. موجودی و ارزش ریالی انبار
+SELECT 
+    p.product_name as "نام محصول",
+    p.brand as "برند",
+    p.stock_quantity as "موجودی",
+    TO_CHAR(p.price, '999,999,999') as "قیمت فروش",
+    TO_CHAR(p.stock_quantity * p.cost_price, '999,999,999') as "ارزش موجودی (تومان)",
+    CASE 
+        WHEN p.stock_quantity = 0 THEN '🟥 اتمام موجودی'
+        WHEN p.stock_quantity < 5 THEN '🟨 موجودی کم'
+        ELSE '🟩 موجودی کافی'
+    END as "وضعیت موجودی"
+FROM products p
+ORDER BY p.stock_quantity ASC;
+
+-- 3. مشتریان وفادار (بر اساس تعداد و ارزش خرید)
+SELECT 
+    c.first_name || ' ' || c.last_name as "نام مشتری",
+    c.province || ' - ' || c.city as "شهرستان",
+    COUNT(o.order_id) as "تعداد سفارشات",
+    TO_CHAR(SUM(o.total_amount), '999,999,999') as "مجموع خرید (تومان)",
+    TO_CHAR(AVG(o.total_amount), '999,999,999') as "میانگین سبد خرید",
+    CASE 
+        WHEN COUNT(o.order_id) >= 3 THEN 'مشتری طلایی'
+        WHEN COUNT(o.order_id) = 2 THEN 'مشتری نقرهای'
+        ELSE 'مشتری جدید'
+    END as "سطح وفاداری"
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name, c.province, c.city
+HAVING COUNT(o.order_id) > 0
+ORDER BY SUM(o.total_amount) DESC;
+
+-- 4. Customer Lifetime Value Analysis
+-- تحلیل  ریسک ترک مشتریان
+SELECT 
+    c.customer_id as "کد مشتری",
+    c.first_name || ' ' || c.last_name as "نام مشتری",
+    c.province as "استان", 
+    c.city as "شهر",
+    
+    -- آمار خرید
+    COUNT(o.order_id) as "تعداد سفارشات",
+    TO_CHAR(COALESCE(SUM(o.total_amount), 0), '999,999,999') as "مجموع خرید",
+    
+    -- تحلیل زمانی
+    CASE 
+        WHEN MAX(o.order_date) IS NULL THEN '❌ بدون سابقه خرید'
+        ELSE TO_CHAR(MAX(o.order_date), 'YYYY-MM-DD')
+    END as "تاریخ آخرین خرید",
+    
+    -- روز از آخرین خرید
+    COALESCE((CURRENT_DATE - MAX(o.order_date)::date), 999) as "روز از آخرین خرید",
+    
+    -- سطح ریسک ترک (با معیارهای واقعی)
+    CASE 
+        WHEN MAX(o.order_date) IS NULL THEN '🔴 مشتری جدید - بدون خرید'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) > 120 THEN '🔴 ریسک بسیار بالا'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 90 AND 120 THEN '🔴 ریسک بالا'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 60 AND 90 THEN '🟡 ریسک متوسط'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 30 AND 60 THEN '🔵 نیاز توجه'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 7 AND 30 THEN '🟢 فعال اخیر'
+        ELSE '🟢 بسیار فعال'
+    END as "وضعیت مشتری",
+    
+    -- ارزش مشتری
+    CASE 
+        WHEN COALESCE(SUM(o.total_amount), 0) > 20000000 THEN '💎 با ارزش بسیار بالا'
+        WHEN COALESCE(SUM(o.total_amount), 0) > 10000000 THEN '⭐ با ارزش بالا' 
+        WHEN COALESCE(SUM(o.total_amount), 0) > 5000000 THEN '📊 ارزش متوسط'
+        ELSE '📈 ارزش پایین'
+    END as "سطح ارزش",
+   
+    -- اقدامات پیشنهادی برای تیم فروش
+    CASE 
+        WHEN MAX(o.order_date) IS NULL THEN 'ارسال کد تخفیف ۲۰٪ برای اولین خرید'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) > 120 THEN 'تماس فوری + پیشنهاد ۵۰٪ تخفیف + هدیه'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 90 AND 120 THEN 'تماس مستقیم + پیشنهاد ۴۰٪ تخفیف'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 60 AND 90 THEN 'ایمیل شخصی + نظرسنجی رضایت'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 30 AND 60 THEN 'خبرنامه محصولات جدید + نظرسنجی'
+        ELSE 'برنامه وفاداری + پیشنهادات ویژه'
+    END as "اقدام بازاریابی"
+
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name, c.province, c.city
+ORDER BY 
+    CASE 
+        WHEN MAX(o.order_date) IS NULL THEN 1
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) > 120 THEN 2
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 90 AND 120 THEN 3
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 60 AND 90 THEN 4
+        ELSE 5
+    END,
+    "روز از آخرین خرید" DESC;
+
+-- 5. Predictive Analytics: Customer Churn Risk
+-- APPROACH 1: Single Query (Clean & Efficient)
+SELECT 
+    c.customer_id,
+    c.first_name || ' ' || c.last_name as customer_name,
+    c.province,
+    (CURRENT_DATE - MAX(o.order_date)::date) as days_since_last_purchase,
+    COUNT(o.order_id) as total_orders,
+    SUM(o.total_amount) as total_spent,
+    CASE 
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) > 90 THEN 'High Risk - Churned'
+        WHEN (CURRENT_DATE - MAX(o.order_date)::date) BETWEEN 60 AND 90 THEN 'Medium Risk'
+        ELSE 'Low Risk - Active'
+    END as churn_risk
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name, c.province;
+
+-- APPROACH 2: Subquery (More Readable for Complex Logic)
+SELECT 
+    customer_id,
+    customer_name,
+    province,
+    (CURRENT_DATE - last_purchase_date) as days_since_last_purchase,
+    total_orders,
+    total_spent,
+    CASE 
+        WHEN (CURRENT_DATE - last_purchase_date) > 90 THEN 'High Risk - Churned'
+        WHEN (CURRENT_DATE - last_purchase_date) BETWEEN 60 AND 90 THEN 'Medium Risk'
+        ELSE 'Low Risk - Active'
+    END as churn_risk
+FROM (
+    SELECT 
+        c.customer_id, 
+        c.first_name || ' ' || c.last_name as customer_name,
+        c.province,
+        MAX(o.order_date) as last_purchase_date,
+        COUNT(o.order_id) as total_orders,
+        SUM(o.total_amount) as total_spent
+    FROM customers c
+    LEFT JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.province
+) customer_stats;
+
+-- تحلیل ریسک ترک مشتریان با معیارهای کسب‌وکار ایرانی
+SELECT 
+    customer_id,
+    first_name || ' ' || last_name as "نام مشتری",
+    province as "استان",
+    city as "شهر",
+    COALESCE((CURRENT_DATE - last_purchase_date::date), 999) as "روز از آخرین خرید",
+    COALESCE(order_count, 0) as "تعداد سفارشات",
+    COALESCE(TO_CHAR(total_spent, '999,999,999'), '۰') as "مجموع خرید (تومان)",
+    CASE 
+        WHEN last_purchase_date IS NULL THEN '❌ هرگز خرید نکرده'
+        WHEN (CURRENT_DATE - last_purchase_date::date) > 120 THEN '🔴 ریسک بسیار بالا'
+        WHEN (CURRENT_DATE - last_purchase_date::date) BETWEEN 90 AND 120 THEN '🟠 ریسک بالا'
+        WHEN (CURRENT_DATE - last_purchase_date::date) BETWEEN 60 AND 90 THEN '🟡 نیاز توجه'
+        WHEN (CURRENT_DATE - last_purchase_date::date) BETWEEN 30 AND 60 THEN '🔵 فعال معمولی'
+        ELSE '🟢 بسیار فعال'
+    END as "وضعیت مشتری",
+    
+    -- توصیه‌های عملی برای تیم فروش
+    CASE 
+        WHEN last_purchase_date IS NULL THEN 'ارسال کد تخفیف اولین خرید'
+        WHEN (CURRENT_DATE - last_purchase_date::date) > 90 THEN 'تماس مستقیم و پیشنهاد ویژه'
+        WHEN (CURRENT_DATE - last_purchase_date::date) BETWEEN 60 AND 90 THEN 'ایمیل شخصی‌سازی شده'
+        ELSE 'ارسال خبرنامه معمولی'
+    END as "اقدام پیشنهادی"
+
+FROM (
+    SELECT 
+        c.customer_id, c.first_name, c.last_name, c.province, c.city,
+        MAX(o.order_date) as last_purchase_date,
+        COUNT(o.order_id) as order_count,
+        SUM(o.total_amount) as total_spent
+    FROM customers c
+    LEFT JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.province, c.city
+) customer_analysis
+ORDER BY 
+    CASE 
+        WHEN last_purchase_date IS NULL THEN 1
+        WHEN (CURRENT_DATE - last_purchase_date::date) > 90 THEN 2
+        ELSE 3
+    END,
+    total_spent DESC NULLS LAST;
+
+-- تحلیل فرصت بازیابی مشتریان
+SELECT 
+    'فرصت بازیابی درآمد' as "تحلیل",
+    TO_CHAR(SUM(total_spent) * 0.3, '999,999,999') as "درآمد قابل بازیابی (تومان)",
+    'با ۳۰٪ نرخ موفقیت' as "فرضیه",
+    'برنامه تماس فوری + تخفیف ویژه' as "راهکار"
+FROM (
+    SELECT 
+        c.customer_id,
+        SUM(o.total_amount) as total_spent,
+        MAX(o.order_date) as last_purchase_date
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id
+    HAVING (CURRENT_DATE - MAX(o.order_date)::date) > 120  -- FIX: HAVING instead of WHERE
+) high_risk_customers;
+
+-- خلاصه اجرایی برای مدیریت
+SELECT 
+    'مشتریان در معرض ترک' as "عنوان",
+    COUNT(*) as "تعداد مشتریان",
+    TO_CHAR(SUM(total_spent), '999,999,999') as "ارزش کل در خطر",
+    'فوری - نیاز به اقدام سریع' as "اولویت"
+FROM (
+    SELECT 
+        c.customer_id,
+        SUM(o.total_amount) as total_spent,
+        MAX(o.order_date) as last_purchase_date
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id
+    HAVING (CURRENT_DATE - MAX(o.order_date)::date) > 120  -- FIX: HAVING instead of WHERE
+) high_risk_customers;
+
+
+SELECT 
+    'تحلیل ریسک کلی کسب‌وکار' as "بخش",
+    COUNT(DISTINCT customer_id) as "کل مشتریان",  -- FIX: Removed "c."
+    SUM(CASE WHEN days_since_last_purchase > 120 THEN 1 ELSE 0 END) as "مشتریان پرریسک",
+    ROUND(SUM(CASE WHEN days_since_last_purchase > 120 THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT customer_id), 1) as "درصد مشتریان پرریسک",  -- FIX: Removed "c."
+    TO_CHAR(SUM(total_spent), '999,999,999') as "کل درآمد تاریخی",
+    TO_CHAR(SUM(CASE WHEN days_since_last_purchase > 120 THEN total_spent ELSE 0 END), '999,999,999') as "درآمد در معرض خطر",
+    ROUND(SUM(CASE WHEN days_since_last_purchase > 120 THEN total_spent ELSE 0 END) * 100.0 / SUM(total_spent), 1) as "درصد درآمد در خطر"
+FROM (
+    SELECT 
+        c.customer_id,
+        SUM(o.total_amount) as total_spent,
+        (CURRENT_DATE - MAX(o.order_date)::date) as days_since_last_purchase
+    FROM customers c
+    LEFT JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id
+) customer_metrics;
+
