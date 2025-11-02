@@ -107,4 +107,4 @@ Contributions, issues, and feature requests are welcome! Feel free to check issu
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
-#⭐ Star this repo if you find it helpful!
+## ⭐ Star this repo if you find it helpful!
