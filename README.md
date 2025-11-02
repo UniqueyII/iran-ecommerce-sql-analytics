@@ -1,4 +1,3 @@
-```markdown
 # 🏪 Iranian E-Commerce SQL Analytics
 
 ## 📊 Project Overview
@@ -12,14 +11,13 @@ A comprehensive SQL-based business intelligence solution for Iranian e-commerce,
 - **🌍 Regional sales analysis** revealing top-performing provinces
 
 ## 🗄️ Database Schema
-```
 📦 E-Commerce Database
 ├── 👥 Customers (Demographics & Registration)
-├── 📦 Products (Inventory & Pricing)  
+├── 📦 Products (Inventory & Pricing)
 ├── 🗂️ Categories (Hierarchical Product Classification)
 ├── 🛒 Orders (Sales Transactions)
 └── 📋 Order Items (Line Item Details)
-```
+
 
 ## 🛠️ Technologies Used
 - **PostgreSQL** - Robust database management
@@ -67,44 +65,46 @@ psql -d your_database -f database/03_indexes_constraints.sql
 psql -d your_database -f analysis/01_sales_analysis.sql
 psql -d your_database -f analysis/02_customer_analysis.sql
 ```
-
-## 📁 Project Structure
-```
+📁 Project Structure
 iranian-ecommerce-sql/
 ├── 📂 database/           # Schema design & sample data
 ├── 📂 analysis/           # Business intelligence queries
 ├── 📂 docs/              # Documentation & explanations
 ├── 📂 scripts/           # Database setup utilities
 └── 📂 results/           # Sample outputs & insights
-```
 
-## 🏆 Achievements & Metrics
-- **🎯 100% accuracy** in customer risk segmentation
-- **💰 46M+ Tomans** recoverable revenue identified  
-- **📊 30% potential revenue recovery** through targeted campaigns
-- **⚡ 86% parameter reduction** in analytical model optimization
-- **🎪 Persian-language support** with localized business logic
+🏆 Achievements & Metrics
+🎯 100% accuracy in customer risk segmentation
 
-## 📊 Sample Insights
-![Customer Risk Analysis](https://results/sample_outputs/customer_risk.png)
-*Customer churn risk segmentation with actionable recommendations*
+💰 46M+ Tomans recoverable revenue identified
 
-## 🎯 Business Applications
-- **Marketing Teams**: Targeted retention campaigns
-- **Sales Departments**: Customer value optimization  
-- **Inventory Managers**: Stock level optimization
-- **Executives**: Strategic business intelligence
+📊 30% potential revenue recovery through targeted campaigns
 
-## 👨‍💻 Author
-**Amin Sharifi** - [aminemsharifi@gmail.com]  
-*Data Analyst & SQL Developer specializing in e-commerce analytics*
+⚡ 86% parameter reduction in analytical model optimization
 
-## 🤝 Contributing
-Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/yourusername/iranian-ecommerce-sql/issues).
+🎪 Persian-language support with localized business logic
 
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+📊 Sample Insights
+https://results/sample_outputs/customer_risk.png
+Customer churn risk segmentation with actionable recommendations
 
----
+🎯 Business Applications
+Marketing Teams: Targeted retention campaigns
 
-**⭐ Star this repo if you find it helpful!**
+Sales Departments: Customer value optimization
+
+Inventory Managers: Stock level optimization
+
+Executives: Strategic business intelligence
+
+👨‍💻 Author
+Amin Sharifi - [aminemsharifi@gmail.com]
+Data Analyst & SQL Developer specializing in e-commerce analytics
+
+🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check issues page.
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+⭐ Star this repo if you find it helpful!
