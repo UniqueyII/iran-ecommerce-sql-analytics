@@ -1,5 +1,10 @@
 # 🏪 Iranian E-Commerce SQL Analytics
 
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12%2B-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+
 ## 📊 Project Overview
 A comprehensive SQL-based business intelligence solution for Iranian e-commerce, featuring customer churn prediction, sales analytics, and revenue optimization strategies.
 
@@ -48,23 +53,26 @@ A comprehensive SQL-based business intelligence solution for Iranian e-commerce,
 ## 🚀 Quick Start
 
 ### Prerequisites
+- Python 3.8+
 - PostgreSQL 12+
-- Basic SQL knowledge
+- Git
 
 ### Installation & Setup
+
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/iranian-ecommerce-sql.git
+git clone https://github.com/yourusername/iranian-ecommerce-analytics.git
+cd iranian-ecommerce-analytics
 
-# Setup database (run in order)
-psql -d your_database -f database/01_schema_design.sql
-psql -d your_database -f database/02_sample_data.sql  
-psql -d your_database -f database/03_indexes_constraints.sql
+# Install Python dependencies
+pip install -r requirements.txt
 
-# Run analytics
-psql -d your_database -f analysis/01_sales_analysis.sql
-psql -d your_database -f analysis/02_customer_analysis.sql
+# Configure database (edit config/database_config.py with your credentials)
+
+# Run the complete analysis
+python main.py
 ```
+
 ## 📁 Project Structure
 iranian-ecommerce-sql/
 ├── 📂 database/           # Schema design & sample data
